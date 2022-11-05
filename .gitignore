@@ -1,0 +1,4 @@
+/multisender/__pycache__
+/multisender/test.py
+/multisender/settings/.secrets.toml
+.venv
