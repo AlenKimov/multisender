@@ -1,4 +1,6 @@
 /multisender/__pycache__
+/multisender/settings/.env
 /multisender/test.py
-/multisender/settings/.secrets.toml
+/multisender/log
 .venv
+.idea

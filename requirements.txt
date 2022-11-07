@@ -1,0 +1,6 @@
+pydantic[dotenv]~=1.10.2
+# python-dotenv~=0.21.0
+web3~=5.31.1
+toml~=0.10.2
+loguru~=0.6.0
+questionary~=1.10.0
