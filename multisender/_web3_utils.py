@@ -90,7 +90,6 @@ def multisend_token(contract_address: str,
     account: LocalAccount = web3.eth.account.from_key(private_key)
 
     first_nonce = web3.eth.get_transaction_count(account.address)
-    print(first_nonce)
     tx_hashes = list()
     for address, nonce in zip(addresses, range(first_nonce, first_nonce + len(addresses))):
         tx = contract.functions.transfer(
