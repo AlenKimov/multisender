@@ -1,4 +1,5 @@
-from cli import main
+from multisend import multisend
+
 
 if __name__ == '__main__':
-    main()
+    multisend()

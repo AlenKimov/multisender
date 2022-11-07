@@ -32,7 +32,7 @@ class ConsoleMenu:
         self.is_started = True
         while self.is_started:
             funcs = dict()
-            funcs.update({"Start multisend": multisend})
+            funcs.update({"Start multisend_ether": multisend})
             funcs.update({f"Amount: {settings.amount}": self.set_amount})
             funcs[questionary.select("MENU", choices=funcs).ask()]()
 
