@@ -5,4 +5,4 @@ from config import providers
 from logger import logger
 
 web3 = Web3(Web3.HTTPProvider(providers.BSC_TESTNET))
-logger.info(f"Connected to blockchain, chain id is {web3.eth.chain_id}. the latest block is {web3.eth.block_number:,}")
+logger.info(f"Connected to blockchain, chain id is {web3.eth.chain_id}.")
