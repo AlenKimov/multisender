@@ -1,49 +1,65 @@
-from pydantic import BaseModel, BaseSettings, SecretStr, Field
+from pydantic import BaseModel, BaseSettings, Field
+from os import makedirs
+from pathlib import Path
 import toml
+import json
 
-from definitions import PROVIDERS_TOML, SETTINGS_TOML, PUBLIC_KEYS_TXT, DOTENV_FILE
+# Скрипты проекта
+from definitions import SETTINGS_DIR
 
+DOTENV_FILE     = Path(SETTINGS_DIR, '.env')
+SETTINGS_TOML   = Path(SETTINGS_DIR, 'settings.toml')
+PUBLIC_KEYS_TXT = Path(SETTINGS_DIR, 'public_keys.txt')
+PROVIDERS_TOML  = Path(SETTINGS_DIR, 'providers.toml')
 
-class HttpProvider(BaseSettings):
-    BSC_MAINNET: str = "https://bsc-dataseed.binance.org/"
-    BSC_TESTNET: str = "https://bsc-testnet.public.blastapi.io"
-    ETH_MAINNET: str | None = Field(None, env="ETH_MAINNET_HTTP_PROVIDER")
-
-    class Config:
-        env_file = DOTENV_FILE
-        env_file_encoding = 'utf-8'
+EIP20_ABI = json.loads('[{"constant":true,"inputs":[],"name":"name","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_spender","type":"address"},{"name":"_value","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_from","type":"address"},{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transferFrom","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"symbol","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"_to","type":"address"},{"name":"_value","type":"uint256"}],"name":"transfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"_owner","type":"address"},{"name":"_spender","type":"address"}],"name":"allowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_from","type":"address"},{"indexed":true,"name":"_to","type":"address"},{"indexed":false,"name":"_value","type":"uint256"}],"name":"Transfer","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"name":"_owner","type":"address"},{"indexed":true,"name":"_spender","type":"address"},{"indexed":false,"name":"_value","type":"uint256"}],"name":"Approval","type":"event"}]')
 
 
 class Settings(BaseModel):
     token_sending: bool = False
     token_contract_address: str | None
-    amount: float
+    amount: float = 0.01
 
 
 class Secrets(BaseSettings):
-    PRIVATE_KEY: str | None = Field(None, env="PRIVATE_KEY")
+    PRIVATE_KEY: str | None = Field(None, env='PRIVATE_KEY')
 
     class Config:
         env_file = DOTENV_FILE
         env_file_encoding = 'utf-8'
 
 
-with open(PROVIDERS_TOML, encoding="utf-8") as providers_txt_file:
-    providers_dict = toml.load(providers_txt_file)
+class HttpProvider(BaseSettings):
+    BSC_MAINNET: str = 'https://bsc-dataseed.binance.org/'
+    BSC_TESTNET: str = 'https://bsc-testnet.public.blastapi.io'
+    ETH_MAINNET: str | None = Field(None, env='ETH_MAINNET_HTTP_PROVIDER')
+
+    class Config:
+        env_file = DOTENV_FILE
+        env_file_encoding = 'utf-8'
 
 
-with open(SETTINGS_TOML, encoding="utf-8") as settings_toml_file:
-    settings_dict = toml.load(settings_toml_file)
-
-providers = HttpProvider(**providers_dict)
-settings = Settings(**settings_dict)
+providers = HttpProvider()
+settings = Settings()
 secrets = Secrets()
 
-with open(PUBLIC_KEYS_TXT, "r") as file:
-    addresses: list[str] = file.readlines()
-    addresses = [address.strip() for address in addresses]
+# Создаю файлы с настройками по умолчанию
+makedirs(SETTINGS_DIR, exist_ok=True)
+with open(DOTENV_FILE, 'a'): pass
+with open(PUBLIC_KEYS_TXT, 'a'): pass
+if not SETTINGS_TOML.exists():
+    with open(SETTINGS_TOML, 'w', encoding='utf-8') as settings_toml:
+        toml.dump(settings.dict(), settings_toml)
+if not PROVIDERS_TOML.exists():
+    with open(PROVIDERS_TOML, 'w', encoding='utf-8') as providers_toml:
+        toml.dump(providers.dict(), providers_toml)
 
 
-def save_settings():
-    with open(SETTINGS_TOML, "w", encoding="utf-8") as settings_file:
-        toml.dump(settings.dict(), settings_file)
+with open(SETTINGS_TOML, encoding='utf-8') as settings_toml:
+    settings = Settings(**toml.load(settings_toml))
+
+with open(PROVIDERS_TOML, encoding='utf-8') as providers_toml:
+    providers = HttpProvider(**toml.load(providers_toml))
+
+with open(PUBLIC_KEYS_TXT, 'r') as public_keys_txt:
+    addresses = [address.strip() for address in public_keys_txt]

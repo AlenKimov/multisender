@@ -5,7 +5,8 @@ python -m venv .venv
 call .venv\Scripts\activate.bat
 @echo Installing libraries...
 pip install -r requirements.txt
-python scripts\create_start_bat.py
+@echo Creating settings files...
+python multisender\config.py
 @echo To start the script run "start.bat"
 pause
 :: start.bat

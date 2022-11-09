@@ -1,6 +1,7 @@
 /multisender/__pycache__
-/multisender/settings/.env
+/multisender/settings
 /multisender/test.py
 /multisender/log
+/multisender/output
 .venv
 .idea
