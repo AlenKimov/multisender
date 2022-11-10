@@ -14,13 +14,16 @@ Distribute ether or tokens to multiple addresses.
 Основные настройки задаются в `settings.toml`:
 
 ```toml
+# Количество токенов:
+AMOUNT = 0.01
 # Отправлять токен (true) или монету сети (false)?
-token_sending = true
+TOKEN_SENDING = true
 # Адрес контракта токена:
 # (Если token_sending = true)
-token_contract_address = "0x0000000000000000000000000000000000000000"
-# Количество токенов:
-amount = 0.01
+TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000"
+# Провайдер:
+# Взять ссылку требуемой сети можно на https://chainlist.org
+HTTP_PROVIDER = "https://bsc-testnet.public.blastapi.io"
 ```
 
 Адреса, на которые будут рассылаться токены, записываются в `public_keys.txt`.
