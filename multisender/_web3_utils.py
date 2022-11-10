@@ -2,11 +2,9 @@ from eth_account.account import LocalAccount
 from web3.contract import Contract
 
 # Скрипты проекта
-from definitions import EIP20_ABI
-from _web3 import web3
 from logger import logger
-import requests
-import json
+from config import EIP20_ABI
+from _web3 import web3
 
 
 def transfer(amount: float,
